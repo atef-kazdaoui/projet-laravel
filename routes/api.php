@@ -3,7 +3,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Utilisateur\UserController;
 use App\Http\Controllers\evenement\EvenementController;
-use App\Http\Controllers\EvenementUser\EventUserController; 
+use App\Http\Controllers\EvenementUser\EvenementUserController; 
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -22,8 +22,7 @@ Route::put('/user/profile', [UserController::class, 'updateProfile'])->middlewar
 Route::post('/evenement/ajout',[EvenementController::class , 'addEvenement'])->middleware('auth:sanctum');
 Route::get('/evenements', [EvenementController::class, 'getAllEvenements'])->middleware('auth:sanctum');
 Route::delete('/evenements/{id}', [EvenementController::class, 'deleteEvenement'])->middleware('auth:sanctum');
-Route::post('/events/{event}/register', [EventUserController::class, 'registerToEvent'])->middleware('auth:sanctum');
-
+Route::post('/events/{id_event}/users', [EvenementUserController::class, 'store'])->middleware('auth:sanctum');
 
 
 

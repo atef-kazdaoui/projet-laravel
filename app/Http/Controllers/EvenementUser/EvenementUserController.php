@@ -1,26 +1,35 @@
 <?php
 
-namespace App\Http\Controllers;
-
-use App\Models\Event;
+namespace App\Http\Controllers\EvenementUser;
+use App\Http\Controllers\Controller; 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Models\EventUser;
+use App\Models\Event; // Assurez-vous d'importer le modèle Event si vous souhaitez vérifier l'existence de l'événement.
 
-class EventUserController extends Controller
+class EvenementUserController extends Controller
 {
-    public function registerToEvent(Request $request, Event $event)
-    {
-        // Récupérer l'utilisateur authentifié
-        $userId = Auth::id();
+    public function store(Request $request, $id_event)
+{
+    // Vérifie si l'événement existe
+    $event = Event::find($id_event);
+    
 
-        // Vérifier si l'utilisateur est déjà inscrit à l'événement
-        if ($event->users()->where('user_id', $userId)->exists()) {
-            return response()->json(['message' => 'L\'utilisateur est déjà inscrit à cet événement'], 409);
-        }
+    if (Auth::check() && $event) {
+        $user_id = Auth::id();
+        // Crée une nouvelle entrée dans la table pivot event_user
+        EventUser::create([
+            'event_id' => $id_event, // Utilisez directement $id_event
+            'user_id' => $user_id,
+        ]);
 
-        // Inscrire l'utilisateur à l'événement
-        $event->users()->attach($userId);
-
-        return response()->json(['message' => 'Inscription réussie']);
+        // Retourne une réponse en cas de succès
+        return response()->json(['message' => 'User successfully attached to event'], 201);
+    } else {
+        // Retourne une réponse en cas d'échec
+        return response()->json(['message' => 'Unauthorized or event not found'], 404);
     }
+}
+
+    
 }
